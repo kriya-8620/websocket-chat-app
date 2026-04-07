@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 
-function UsersList({ socket }) {
+function UsersList({
+  socket,
+  setPrivateUser
+}) {
 
   const [users,
     setUsers] =
@@ -10,9 +13,9 @@ function UsersList({ socket }) {
 
     socket.on(
       "usersList",
-      (usersList) => {
+      (list) => {
 
-        setUsers(usersList);
+        setUsers(list);
 
       }
     );
@@ -29,14 +32,21 @@ function UsersList({ socket }) {
 
     <div className="users-list">
 
-      <h3>Online Users</h3>
+      <h4>Users</h4>
 
-      {users.map(
-        (user, i) => (
+      {users.map(user => (
 
-          <div key={i}>
-            🟢 {user}
-          </div>
+        <div
+          key={user}
+          className="user"
+          onClick={() =>
+            setPrivateUser(user)
+          }
+        >
+
+          🟢 {user}
+
+        </div>
 
       ))}
 

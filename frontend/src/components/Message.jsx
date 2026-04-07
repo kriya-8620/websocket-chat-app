@@ -1,4 +1,7 @@
-function Message({ msg, currentUser }) {
+function Message({
+  msg,
+  currentUser
+}) {
 
   const isOwn =
     msg.sender === currentUser;
@@ -13,27 +16,27 @@ function Message({ msg, currentUser }) {
       }
     >
 
-      <div className="message-header">
+      <b>
+        {msg.sender}
+      </b>
 
-        <b>
-          {msg.sender}
-        </b>
-
-        <span className="time">
-
-          {new Date(
-            msg.time
-          ).toLocaleTimeString()}
-
-        </span>
-
-      </div>
-
-      <div className="message-text">
-
+      <div>
         {msg.text}
-
       </div>
+
+      {msg.file && (
+
+        <a
+          href={
+            "http://localhost:5000/uploads/" +
+            msg.file
+          }
+          target="_blank"
+        >
+          📎 File
+        </a>
+
+      )}
 
     </div>
 

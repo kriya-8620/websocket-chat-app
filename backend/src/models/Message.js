@@ -1,19 +1,32 @@
 import mongoose from "mongoose";
 
-const messageSchema = new mongoose.Schema({
+const messageSchema =
+  new mongoose.Schema({
 
-  sender: String,
+    sender: {
+      type: String,
+      required: true
+    },
 
-  text: String,
+    text: String,
 
-  room: String,
+    file: String,
 
-  time: {
-    type: Date,
-    default: Date.now
-  }
+    room: String,
 
-});
+    receiver: String,
+
+    isPrivate: {
+      type: Boolean,
+      default: false
+    },
+
+    time: {
+      type: Date,
+      default: Date.now
+    }
+
+  });
 
 export default mongoose.model(
   "Message",

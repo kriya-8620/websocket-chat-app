@@ -1,14 +1,17 @@
 import Message from "../models/Message.js";
 
-/* Store users per room */
-
 let users = {};
 
-export const setupSocket = (io) => {
+export const setupSocket =
+(io) => {
 
-  io.on("connection", (socket) => {
+  io.on("connection",
+  (socket) => {
 
-    console.log("User Connected:", socket.id);
+    console.log(
+      "User Connected:",
+      socket.id
+    );
 
     /* JOIN ROOM */
 
@@ -18,22 +21,19 @@ export const setupSocket = (io) => {
 
         socket.join(room);
 
-        /* Save user */
-
         users[socket.id] = {
           username,
           room
         };
 
-        /* Send updated users list */
-
         const roomUsers =
           Object.values(users)
             .filter(
-              user => user.room === room
+              u =>
+                u.room === room
             )
             .map(
-              user => user.username
+              u => u.username
             );
 
         io.to(room).emit(
@@ -41,27 +41,49 @@ export const setupSocket = (io) => {
           roomUsers
         );
 
-        /* Load previous messages */
-
         const messages =
-          await Message.find({ room });
+          await Message.find({
+            room,
+            isPrivate: false
+          });
 
         socket.emit(
           "previousMessages",
           messages
         );
 
-        /* Notify join */
+      }
+    );
 
-        io.to(room).emit(
-          "systemMessage",
-          `${username} joined`
+    /* PRIVATE CHAT */
+
+    socket.on(
+      "privateMessage",
+      async ({
+        sender,
+        receiver,
+        text
+      }) => {
+
+        const message =
+          await Message.create({
+
+            sender,
+            receiver,
+            text,
+            isPrivate: true
+
+          });
+
+        io.emit(
+          "privateMessage",
+          message
         );
 
       }
     );
 
-    /* SEND MESSAGE */
+    /* GROUP MESSAGE */
 
     socket.on(
       "chatMessage",
@@ -118,7 +140,9 @@ export const setupSocket = (io) => {
           const roomUsers =
             Object.values(users)
               .filter(
-                u => u.room === user.room
+                u =>
+                  u.room ===
+                  user.room
               )
               .map(
                 u => u.username
@@ -129,17 +153,7 @@ export const setupSocket = (io) => {
             roomUsers
           );
 
-          io.to(user.room).emit(
-            "systemMessage",
-            `${user.username} left`
-          );
-
         }
-
-        console.log(
-          "User Disconnected:",
-          socket.id
-        );
 
       }
     );
