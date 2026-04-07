@@ -1,25 +1,34 @@
-import { useState } from "react";
-import Login from "./Login";
-import Chat from "./Chat";
+import Login from "./components/Login";
+import ChatRoom from "./components/ChatRoom";
+
+import {
+  useContext
+} from "react";
+
+import {
+  AuthContext
+} from "./context/AuthContext";
 
 function App() {
 
-  const [username, setUsername] =
-    useState("");
+  const { user } =
+    useContext(
+      AuthContext
+    );
 
   return (
-    <div className="app">
 
-      {!username ? (
-        <Login
-          setUsername={setUsername}
-        />
-      ) : (
-        <Chat username={username} />
-      )}
+    <div>
+
+      {!user
+        ? <Login />
+        : <ChatRoom />
+      }
 
     </div>
+
   );
+
 }
 
 export default App;

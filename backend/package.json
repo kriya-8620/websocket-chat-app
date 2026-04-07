@@ -1,28 +1,21 @@
 {
-  "name": "websocket-chat-app",
+  "name": "production-chat-backend",
   "version": "1.0.0",
-  "description": "",
   "type": "module",
-  "main": "index.js",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "ws": "^8.17.0",
-    "cors": "^2.8.5"
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.5.0",
+    "socket.io": "^4.7.5"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kriya-8620/websocket-chat-app.git"
-  },
-  "keywords": [
-    "Javascript"
-  ],
-  "author": "Krishna Chand Koley",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/kriya-8620/websocket-chat-app/issues"
-  },
-  "homepage": "https://github.com/kriya-8620/websocket-chat-app#readme"
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
 }

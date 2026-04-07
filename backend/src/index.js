@@ -1,28 +1,49 @@
 import express from "express";
-import cors from "cors";
 import http from "http";
-import { setupWebSocket } from "./websocket.js";
+import cors from "cors";
+import dotenv from "dotenv";
+
+import { Server } from "socket.io";
+
+import connectDB from "./config/db.js";
+import authRoutes from "./routes/authRoutes.js";
+import { setupSocket }
+  from "./socket/socket.js";
+
+dotenv.config();
+
+connectDB();
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Test Route
-app.get("/", (req, res) => {
-  res.send("WebSocket Chat Server Running 🚀");
-});
+app.use("/api/auth",
+  authRoutes
+);
 
-// Create HTTP server
-const server = http.createServer(app);
+const server =
+  http.createServer(app);
 
-// Setup WebSocket
-setupWebSocket(server);
+const io =
+  new Server(server, {
 
-const PORT = 5000;
+    cors: {
+      origin: "*"
+    }
 
-// Start Server
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+  });
+
+setupSocket(io);
+
+server.listen(
+  process.env.PORT,
+  () => {
+
+    console.log(
+      "Server Running 🚀"
+    );
+
+  }
+);
