@@ -1,0 +1,23 @@
+{
+  "name": "websocket-chat-app",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kriya-8620/websocket-chat-app.git"
+  },
+  "keywords": [
+    "Javascript"
+  ],
+  "author": "Krishna Chand Koley",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kriya-8620/websocket-chat-app/issues"
+  },
+  "homepage": "https://github.com/kriya-8620/websocket-chat-app#readme"
+}
