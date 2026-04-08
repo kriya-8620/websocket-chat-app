@@ -365,3 +365,99 @@ body.dark .message.own {
 .logout-btn:hover {
   background: #d9363e;
 }
+
+.user {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.dm-badge {
+  background: red;
+  color: white;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+
+.users-list {
+  margin-top: 15px;
+}
+
+.user {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.user:hover {
+  background: #40444b;
+}
+
+.last-seen {
+  font-size: 11px;
+  color: #bbb;
+}
+
+.dm-badge {
+  background: red;
+  color: white;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+.status {
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.seen {
+  color: #4fc3f7;
+  font-weight: bold;
+}
+
+.chat-item {
+
+  display: flex;
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #444;
+
+}
+
+.chat-item:hover {
+
+  background: #2f3136;
+
+}
+
+.avatar {
+
+  margin-right: 10px;
+
+}
+
+.chat-info {
+
+  flex: 1;
+
+}
+
+.chat-top {
+
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+
+}
+
+.chat-message {
+
+  font-size: 12px;
+  color: gray;
+
+}

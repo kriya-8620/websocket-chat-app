@@ -1,18 +1,62 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 function UsersList({
   socket,
   setPrivateUser
 }) {
 
-  const [users,
-    setUsers] =
+  const [conversations,
+    setConversations] =
+    useState([]);
+
+  const [onlineUsers,
+    setOnlineUsers] =
     useState([]);
 
   const currentUser =
     localStorage.getItem(
       "username"
     );
+
+  /* ======================= */
+  /* LOAD CONVERSATIONS */
+  /* ======================= */
+
+  useEffect(() => {
+
+    loadConversations();
+
+  }, []);
+
+  const loadConversations =
+    async () => {
+
+      try {
+
+        const res =
+          await axios.get(
+`http://localhost:5000/api/conversations/${currentUser}`
+          );
+
+        setConversations(res.data);
+
+      }
+
+      catch (err) {
+
+        console.error(
+          "Conversation load error:",
+          err
+        );
+
+      }
+
+    };
+
+  /* ======================= */
+  /* ONLINE USERS */
+  /* ======================= */
 
   useEffect(() => {
 
@@ -22,7 +66,7 @@ function UsersList({
       "usersList",
       (list) => {
 
-        setUsers(list);
+        setOnlineUsers(list);
 
       }
     );
@@ -35,32 +79,98 @@ function UsersList({
 
   }, [socket]);
 
+  /* ======================= */
+  /* OPEN CHAT */
+  /* ======================= */
+
+  const openChat =
+    (user) => {
+
+      setPrivateUser(user);
+
+    };
+
+  /* ======================= */
+  /* UI */
+  /* ======================= */
+
   return (
 
     <div className="users-list">
 
-      <h4>Users</h4>
+      <h4>Chats</h4>
 
-      {users
-        .filter(
-          user =>
-            user !== currentUser
-        )
-        .map(user => (
+      {conversations.map(chat => {
 
-        <div
-          key={user}
-          className="user"
-          onClick={() =>
-            setPrivateUser(user)
+        const isOnline =
+          onlineUsers.includes(
+            chat.username
+          );
+
+        return (
+
+          <div
+            key={chat.username}
+            className="chat-item"
+            onClick={() =>
+              openChat(
+                chat.username
+              )
+            }
+          >
+
+            {/* Avatar */}
+
+            <div className="avatar">
+
+              {isOnline
+                ? "🟢"
+                : "⚫"}
+
+            </div>
+
+            {/* Chat Info */}
+
+            <div className="chat-info">
+
+              <div className="chat-top">
+
+                <span className="chat-name">
+
+                  {chat.username}
+
+                </span>
+
+                <span className="chat-time">
+
+  {chat.time
+    ? new Date(chat.time)
+        .toLocaleTimeString(
+          [],
+          {
+            hour: "2-digit",
+            minute: "2-digit"
           }
-        >
+        )
+    : ""}
 
-          🟢 {user}
+</span>
 
-        </div>
+              </div>
 
-      ))}
+              <div className="chat-message">
+
+                {chat.lastMessage}
+
+              </div>
+
+            </div>
+
+          </div>
+
+        );
+
+      })}
 
     </div>
 

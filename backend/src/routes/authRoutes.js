@@ -135,4 +135,16 @@ router.post(
   }
 );
 
+router.get(
+  "/all-users",
+  async (req, res) => {
+
+    const users =
+      await User.find()
+        .select("username lastSeen");
+
+    res.json(users);
+
+  }
+);
 export default router;

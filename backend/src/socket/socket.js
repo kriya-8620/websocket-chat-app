@@ -1,4 +1,5 @@
 import Message from "../models/Message.js";
+import User from "../models/User.js";
 
 let users = {};
 
@@ -13,7 +14,9 @@ export const setupSocket =
       socket.id
     );
 
+    /* ---------------------- */
     /* JOIN ROOM */
+    /* ---------------------- */
 
     socket.on(
       "joinRoom",
@@ -21,30 +24,30 @@ export const setupSocket =
 
         socket.join(room);
 
-        /* Save user */
-
         users[socket.id] = {
           username,
           room
         };
 
-        /* 🔥 SEND GLOBAL USERS */
+        /* SEND ONLINE USERS */
 
-        const allUsers =
+        const onlineUsers =
           Object.values(users)
             .map(u => u.username);
 
         io.emit(
           "usersList",
-          allUsers
+          onlineUsers
         );
 
-        /* Load Messages */
+        /* LOAD GROUP HISTORY */
 
         const messages =
           await Message.find({
             room,
             isPrivate: false
+          }).sort({
+            createdAt: 1
           });
 
         socket.emit(
@@ -55,7 +58,39 @@ export const setupSocket =
       }
     );
 
+    /* ---------------------- */
+    /* GROUP MESSAGE */
+    /* ---------------------- */
+
+    socket.on(
+      "chatMessage",
+      async ({
+        username,
+        text,
+        room
+      }) => {
+
+        const message =
+          await Message.create({
+
+            sender: username,
+            text,
+            room,
+            isPrivate: false
+
+          });
+
+        io.to(room).emit(
+          "message",
+          message
+        );
+
+      }
+    );
+
+    /* ---------------------- */
     /* PRIVATE MESSAGE */
+    /* ---------------------- */
 
     socket.on(
       "privateMessage",
@@ -71,7 +106,8 @@ export const setupSocket =
             sender,
             receiver,
             text,
-            isPrivate: true
+            isPrivate: true,
+            status: "delivered"
 
           });
 
@@ -83,62 +119,68 @@ export const setupSocket =
       }
     );
 
-    /* GROUP MESSAGE */
+    /* ---------------------- */
+    /* SEEN MESSAGE */
+    /* ---------------------- */
 
     socket.on(
-      "chatMessage",
-      async ({
-        username,
-        text,
-        room
-      }) => {
+      "seenMessage",
+      async (messageId) => {
 
-        const message =
-          await Message.create({
+        const updated =
+          await Message
+            .findByIdAndUpdate(
+              messageId,
+              { status: "seen" },
+              { new: true }
+            );
 
-            sender: username,
-            text,
-            room
+        if (updated) {
 
-          });
+          io.emit(
+            "messageSeen",
+            updated
+          );
 
-        io.to(room).emit(
-          "message",
-          message
-        );
+        }
 
       }
     );
 
-    /* TYPING */
-
-    socket.on(
-      "typing",
-      ({ username, room }) => {
-
-        socket.to(room).emit(
-          "typing",
-          username
-        );
-
-      }
-    );
-
+    /* ---------------------- */
     /* DISCONNECT */
+    /* ---------------------- */
 
     socket.on(
       "disconnect",
-      () => {
+      async () => {
+
+        const user =
+          users[socket.id];
+
+        if (user) {
+
+          await User.updateOne(
+            { username: user.username },
+            { lastSeen: new Date() }
+          );
+
+        }
 
         delete users[socket.id];
 
-        const allUsers =
+        const onlineUsers =
           Object.values(users)
             .map(u => u.username);
 
         io.emit(
           "usersList",
-          allUsers
+          onlineUsers
+        );
+
+        console.log(
+          "User disconnected:",
+          socket.id
         );
 
       }

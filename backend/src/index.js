@@ -7,12 +7,21 @@ import connectDB from "./config/db.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import roomRoutes from "./routes/roomRoutes.js";
+import messageRoutes
+from "./routes/messageRoutes.js";
+
 
 import { Server }
 from "socket.io";
 
 import { setupSocket }
 from "./socket/socket.js";
+import userRoutes
+from "./routes/userRoutes.js";
+import conversationRoutes
+from "./routes/conversationRoutes.js";
+
+
 
 dotenv.config();
 
@@ -30,7 +39,21 @@ app.use(
   express.static("uploads")
 );
 
+
+app.use(
+  "/api/conversations",
+  conversationRoutes
+);
+
+app.use(
+  "/api/messages",
+  messageRoutes
+);
 /* Routes */
+app.use(
+  "/api/users",
+  userRoutes
+);
 
 app.use(
   "/api/auth",

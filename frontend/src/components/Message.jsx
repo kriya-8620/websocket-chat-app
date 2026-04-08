@@ -1,17 +1,47 @@
-function Message({ msg, currentUser }) {
+function Message({
+  msg,
+  currentUser
+}) {
 
   const isOwn =
     msg.sender === currentUser;
 
-  /* Format time */
+  /* FIXED TIME */
 
   const time =
-    new Date(msg.time)
-      .toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit"
-      });
+    msg.createdAt
+      ? new Date(msg.createdAt)
+          .toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit"
+          })
+      : "";
 
+  /* STATUS TICKS */
+
+  const renderStatus = () => {
+
+  if (!isOwn)
+    return null;
+
+  if (msg.status === "sent")
+    return "✓";
+
+  if (msg.status === "delivered")
+    return "✓✓";
+
+  if (msg.status === "seen")
+    return (
+
+      <span className="seen">
+
+        ✓✓
+
+      </span>
+
+    );
+
+};
   return (
 
     <div
@@ -37,6 +67,12 @@ function Message({ msg, currentUser }) {
       <div className="message-text">
 
         {msg.text}
+
+      </div>
+
+      <div className="status">
+
+        {renderStatus()}
 
       </div>
 

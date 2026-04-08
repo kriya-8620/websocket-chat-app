@@ -1,4 +1,8 @@
-import { useEffect, useState, useRef } from "react";
+import {
+  useEffect,
+  useState,
+  useRef
+} from "react";
 
 import Message from "./Message";
 import EmojiPicker from "./EmojiPicker";
@@ -29,9 +33,17 @@ function ChatWindow({
       "username"
     );
 
-  /* Join Room */
+  /* --------------------------- */
+  /* JOIN ROOM */
+  /* --------------------------- */
 
   useEffect(() => {
+
+    if (!socket) return;
+
+    /* Clear messages on room switch */
+
+    setMessages([]);
 
     socket.emit(
       "joinRoom",
@@ -41,21 +53,28 @@ function ChatWindow({
       }
     );
 
+  }, [currentRoom, socket]);
+
+  /* --------------------------- */
+  /* SOCKET LISTENERS */
+  /* --------------------------- */
+
+  useEffect(() => {
+
+    if (!socket) return;
+
     /* Load old messages */
 
-    socket.on(
-      "previousMessages",
+    const handlePrevious =
       (msgs) => {
 
         setMessages(msgs);
 
-      }
-    );
+      };
 
     /* Receive new message */
 
-    socket.on(
-      "message",
+    const handleMessage =
       (msg) => {
 
         setMessages(prev => [
@@ -65,13 +84,11 @@ function ChatWindow({
 
         ]);
 
-      }
-    );
+      };
 
     /* Typing indicator */
 
-    socket.on(
-      "typing",
+    const handleTyping =
       (user) => {
 
         setTypingUser(user);
@@ -82,32 +99,62 @@ function ChatWindow({
 
         }, 2000);
 
-      }
+      };
+
+    socket.on(
+      "previousMessages",
+      handlePrevious
+    );
+
+    socket.on(
+      "message",
+      handleMessage
+    );
+
+    socket.on(
+      "typing",
+      handleTyping
     );
 
     /* Cleanup */
 
     return () => {
 
-      socket.off("message");
-      socket.off("previousMessages");
-      socket.off("typing");
+      socket.off(
+        "previousMessages",
+        handlePrevious
+      );
+
+      socket.off(
+        "message",
+        handleMessage
+      );
+
+      socket.off(
+        "typing",
+        handleTyping
+      );
 
     };
 
-  }, [currentRoom]);
+  }, [socket]);
 
-  /* Auto Scroll */
+  /* --------------------------- */
+  /* AUTO SCROLL */
+  /* --------------------------- */
 
   useEffect(() => {
 
-    bottomRef.current?.scrollIntoView({
-      behavior: "smooth"
-    });
+    bottomRef.current
+      ?.scrollIntoView({
+        behavior: "smooth"
+      });
 
   }, [messages]);
 
-  /* Send Message */
+  /* --------------------------- */
+  /* SEND MESSAGE */
+  /* --------------------------- */
 
   const sendMessage = () => {
 
@@ -129,21 +176,30 @@ function ChatWindow({
 
   };
 
-  /* Handle Typing */
+  /* --------------------------- */
+  /* HANDLE TYPING */
+  /* --------------------------- */
 
-  const handleTyping = (e) => {
+  const handleTyping =
+    (e) => {
 
-    setText(e.target.value);
+      setText(
+        e.target.value
+      );
 
-    socket.emit(
-      "typing",
-      {
-        username,
-        room: currentRoom
-      }
-    );
+      socket.emit(
+        "typing",
+        {
+          username,
+          room: currentRoom
+        }
+      );
 
-  };
+    };
+
+  /* --------------------------- */
+  /* UI */
+  /* --------------------------- */
 
   return (
 
@@ -152,7 +208,9 @@ function ChatWindow({
       {/* Room Title */}
 
       <h3>
+
         #{currentRoom}
+
       </h3>
 
       {/* Messages */}
@@ -162,11 +220,11 @@ function ChatWindow({
         {messages.map(
           (msg, i) => (
 
-            <Message
-              key={i}
-              msg={msg}
-              currentUser={username}
-            />
+          <Message
+            key={msg._id || i}
+            msg={msg}
+            currentUser={username}
+          />
 
         ))}
 
@@ -182,27 +240,19 @@ function ChatWindow({
 
         )}
 
-        {/* Auto-scroll anchor */}
-
         <div ref={bottomRef} />
 
       </div>
 
-      {/* Input Area */}
+      {/* Input */}
 
       <div className="chat-input">
-
-        {/* Emoji */}
 
         <EmojiPicker
           setText={setText}
         />
 
-        {/* File Upload */}
-
         <FileUpload />
-
-        {/* Input */}
 
         <input
           type="text"
@@ -214,8 +264,6 @@ function ChatWindow({
             sendMessage()
           }
         />
-
-        {/* Send Button */}
 
         <button
           onClick={sendMessage}

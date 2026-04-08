@@ -1,32 +1,41 @@
 import mongoose from "mongoose";
 
 const messageSchema =
-  new mongoose.Schema({
+new mongoose.Schema({
 
-    sender: {
-      type: String,
-      required: true
-    },
+  sender: {
+    type: String,
+    required: true
+  },
 
-    text: String,
+  receiver: String,
 
-    file: String,
+  text: String,
 
-    room: String,
+  room: String,
 
-    receiver: String,
+  isPrivate: {
+    type: Boolean,
+    default: false
+  },
 
-    isPrivate: {
-      type: Boolean,
-      default: false
-    },
+  /* WhatsApp-style status */
 
-    time: {
-      type: Date,
-      default: Date.now
-    }
+  status: {
+    type: String,
+    enum: [
+      "sent",
+      "delivered",
+      "seen"
+    ],
+    default: "sent"
+  }
 
-  });
+}, {
+
+  timestamps: true
+
+});
 
 export default mongoose.model(
   "Message",
