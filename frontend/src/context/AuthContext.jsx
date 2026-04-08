@@ -11,7 +11,9 @@ export const AuthProvider =
 
   const [user,
     setUser] =
-    useState(null);
+    useState(
+      localStorage.getItem("username")
+    );
 
   return (
 

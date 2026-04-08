@@ -18,25 +18,16 @@ function Register({ goToLogin }) {
 
         await API.post(
           "/auth/register",
-          {
-            username,
-            password
-          }
+          { username, password }
         );
 
-        alert(
-          "Registered successfully"
-        );
+        alert("Registered!");
 
         goToLogin();
 
-      } catch (error) {
+      } catch {
 
-        alert(
-          error.response?.data
-            ?.message ||
-          "Registration failed"
-        );
+        alert("Registration failed");
 
       }
 
@@ -44,49 +35,47 @@ function Register({ goToLogin }) {
 
   return (
 
-    <div className="auth-container">
+    <div className="auth-page">
 
-      <h2>Register</h2>
+      <div className="auth-card">
 
-      <input
-        placeholder="Username"
-        value={username}
-        onChange={(e) =>
-          setUsername(
-            e.target.value
-          )
-        }
-      />
+        <h2>Create Account</h2>
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) =>
-          setPassword(
-            e.target.value
-          )
-        }
-      />
+        <input
+          placeholder="Username"
+          value={username}
+          onChange={(e) =>
+            setUsername(e.target.value)
+          }
+        />
 
-      <button
-        onClick={handleRegister}
-      >
-        Register
-      </button>
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) =>
+            setPassword(e.target.value)
+          }
+        />
 
-      <p>
+        <button onClick={handleRegister}>
+          Register
+        </button>
 
-        Already have account?
+        <p>
 
-        <span
-          className="link"
-          onClick={goToLogin}
-        >
-          Login
-        </span>
+          Already have account?
 
-      </p>
+          <span
+            className="link"
+            onClick={goToLogin}
+          >
+            Login
+          </span>
+
+        </p>
+
+      </div>
 
     </div>
 

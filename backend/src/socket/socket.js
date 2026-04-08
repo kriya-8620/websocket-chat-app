@@ -21,25 +21,25 @@ export const setupSocket =
 
         socket.join(room);
 
+        /* Save user */
+
         users[socket.id] = {
           username,
           room
         };
 
-        const roomUsers =
-          Object.values(users)
-            .filter(
-              u =>
-                u.room === room
-            )
-            .map(
-              u => u.username
-            );
+        /* 🔥 SEND GLOBAL USERS */
 
-        io.to(room).emit(
+        const allUsers =
+          Object.values(users)
+            .map(u => u.username);
+
+        io.emit(
           "usersList",
-          roomUsers
+          allUsers
         );
+
+        /* Load Messages */
 
         const messages =
           await Message.find({
@@ -55,7 +55,7 @@ export const setupSocket =
       }
     );
 
-    /* PRIVATE CHAT */
+    /* PRIVATE MESSAGE */
 
     socket.on(
       "privateMessage",
@@ -130,30 +130,16 @@ export const setupSocket =
       "disconnect",
       () => {
 
-        const user =
-          users[socket.id];
+        delete users[socket.id];
 
-        if (user) {
+        const allUsers =
+          Object.values(users)
+            .map(u => u.username);
 
-          delete users[socket.id];
-
-          const roomUsers =
-            Object.values(users)
-              .filter(
-                u =>
-                  u.room ===
-                  user.room
-              )
-              .map(
-                u => u.username
-              );
-
-          io.to(user.room).emit(
-            "usersList",
-            roomUsers
-          );
-
-        }
+        io.emit(
+          "usersList",
+          allUsers
+        );
 
       }
     );

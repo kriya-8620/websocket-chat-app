@@ -1,120 +1,90 @@
 import { useState, useContext } from "react";
 import API from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
-import Register from "./Register";
 
-function Login() {
+function Login({ goToRegister }) {
 
   const { setUser } =
     useContext(AuthContext);
 
-  const [username,
-    setUsername] =
+  const [username, setUsername] =
     useState("");
 
-  const [password,
-    setPassword] =
+  const [password, setPassword] =
     useState("");
 
-  const [showRegister,
-    setShowRegister] =
-    useState(false);
+  const handleLogin = async () => {
 
-  const handleLogin =
-    async () => {
+    try {
 
-      try {
-
-        const res =
-          await API.post(
-            "/auth/login",
-            {
-              username,
-              password
-            }
-          );
-
-        localStorage.setItem(
-          "token",
-          res.data.token
+      const res =
+        await API.post(
+          "/auth/login",
+          { username, password }
         );
 
-        localStorage.setItem(
-          "username",
-          res.data.username
-        );
+      localStorage.setItem(
+        "token",
+        res.data.token
+      );
 
-        setUser(
-          res.data.username
-        );
+      localStorage.setItem(
+        "username",
+        res.data.username
+      );
 
-      } catch (error) {
+      setUser(res.data.username);
 
-        alert(
-          error.response?.data
-            ?.message ||
-          "Login failed"
-        );
+    } catch {
 
-      }
+      alert("Login failed");
 
-    };
+    }
 
-  if (showRegister)
-    return (
-      <Register
-        goToLogin={() =>
-          setShowRegister(false)
-        }
-      />
-    );
+  };
 
   return (
 
-    <div className="auth-container">
+    <div className="auth-page">
 
-      <h2>Login</h2>
+      <div className="auth-card">
 
-      <input
-        placeholder="Username"
-        value={username}
-        onChange={(e) =>
-          setUsername(
-            e.target.value
-          )
-        }
-      />
+        <h2>💬 Welcome Back</h2>
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) =>
-          setPassword(
-            e.target.value
-          )
-        }
-      />
-
-      <button
-        onClick={handleLogin}
-      >
-        Login
-      </button>
-
-      <p>
-        Don't have account?
-
-        <span
-          className="link"
-          onClick={() =>
-            setShowRegister(true)
+        <input
+          placeholder="Username"
+          value={username}
+          onChange={(e) =>
+            setUsername(e.target.value)
           }
-        >
-          Register
-        </span>
+        />
 
-      </p>
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) =>
+            setPassword(e.target.value)
+          }
+        />
+
+        <button onClick={handleLogin}>
+          Login
+        </button>
+
+        <p>
+          Don't have account?
+
+          <span
+            className="link"
+            onClick={goToRegister}
+          >
+            Register
+          </span>
+
+        </p>
+
+      </div>
 
     </div>
 

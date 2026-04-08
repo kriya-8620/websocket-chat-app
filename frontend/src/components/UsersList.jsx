@@ -9,7 +9,14 @@ function UsersList({
     setUsers] =
     useState([]);
 
+  const currentUser =
+    localStorage.getItem(
+      "username"
+    );
+
   useEffect(() => {
+
+    if (!socket) return;
 
     socket.on(
       "usersList",
@@ -34,7 +41,12 @@ function UsersList({
 
       <h4>Users</h4>
 
-      {users.map(user => (
+      {users
+        .filter(
+          user =>
+            user !== currentUser
+        )
+        .map(user => (
 
         <div
           key={user}

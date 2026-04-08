@@ -1,10 +1,16 @@
-function Message({
-  msg,
-  currentUser
-}) {
+function Message({ msg, currentUser }) {
 
   const isOwn =
     msg.sender === currentUser;
+
+  /* Format time */
+
+  const time =
+    new Date(msg.time)
+      .toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
 
   return (
 
@@ -16,27 +22,23 @@ function Message({
       }
     >
 
-      <b>
-        {msg.sender}
-      </b>
+      <div className="message-header">
 
-      <div>
-        {msg.text}
+        <span className="sender">
+          {msg.sender}
+        </span>
+
+        <span className="time">
+          {time}
+        </span>
+
       </div>
 
-      {msg.file && (
+      <div className="message-text">
 
-        <a
-          href={
-            "http://localhost:5000/uploads/" +
-            msg.file
-          }
-          target="_blank"
-        >
-          📎 File
-        </a>
+        {msg.text}
 
-      )}
+      </div>
 
     </div>
 

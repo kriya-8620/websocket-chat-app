@@ -14,6 +14,10 @@ function RoomSelector({
     setNewRoom] =
     useState("");
 
+  const [unread,
+    setUnread] =
+    useState({});
+
   useEffect(() => {
 
     fetchRooms();
@@ -65,11 +69,32 @@ function RoomSelector({
               ? "room active"
               : "room"
           }
-          onClick={() =>
-            setCurrentRoom(room.name)
-          }
+          onClick={() => {
+
+            setCurrentRoom(room.name);
+
+            /* Clear unread */
+
+            setUnread(prev => ({
+              ...prev,
+              [room.name]: 0
+            }));
+
+          }}
         >
+
           # {room.name}
+
+          {unread[room.name] > 0 && (
+
+            <span className="badge">
+
+              {unread[room.name]}
+
+            </span>
+
+          )}
+
         </div>
 
       ))}
